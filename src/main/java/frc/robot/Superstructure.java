@@ -172,7 +172,7 @@ public class Superstructure {
                 FeederSubsystem.getInstance().setState(FeederStates.OFF);
             }
             case Auto -> {
-                // Do nothing
+
             }
         }
 

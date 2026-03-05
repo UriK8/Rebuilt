@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 public class AutoLoader {
 
     private enum Paths {
-        LeftCycleClimb,
-        RightCycleClimb,
-        CenterCycleClimb
+        Left,
+        Right,
+        Center
     }
     private final SendableChooser<Paths> pathChooser;
     private Paths selectedPath;
@@ -25,18 +25,16 @@ public class AutoLoader {
 
     public Command getAutoCommand() {
         switch (pathChooser.getSelected()) {
-            case LeftCycleClimb:
+            case Left:
                 break;
-            case RightCycleClimb:
+            case Center:
                 break;
-            case CenterCycleClimb:
+            case Right:
                 break;
         }
         SequentialCommandGroup cmd = new SequentialCommandGroup(
 
         );
-
-
         return null;
     }
 

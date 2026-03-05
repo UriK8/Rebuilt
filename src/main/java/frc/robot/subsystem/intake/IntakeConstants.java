@@ -5,7 +5,7 @@ import edu.wpi.first.units.measure.Voltage;
 import static edu.wpi.first.units.Units.Volts;
 
 public class IntakeConstants {
-    public static final int DRIVE_MOTOR_ID = 12;
+    public static final int DRIVE_MOTOR_ID = 5;
 
     public static final int SOLENOID_FWD_CHANNEL = 1;
     public static final int SOLENOID_REV_CHANNEL = 2;

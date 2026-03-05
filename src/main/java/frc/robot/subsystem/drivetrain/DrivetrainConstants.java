@@ -10,7 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.util.Units;
 
 public class DrivetrainConstants {
-    public final static CANBus DRIVETRAIN_CANBUS = new CANBus("Drivetrain");
+    public final static CANBus DRIVETRAIN_CANBUS = new CANBus("drivetrain");
 
     public final static int GYRO_ID = 13;
 
@@ -50,24 +50,6 @@ public class DrivetrainConstants {
     public static int getDriveID(SwerveModule module) {
         switch (module) {
             case FrontLeft -> {
-                return 5;
-            }
-            case FrontRight -> {
-                return 6;
-            }
-            case BackLeft -> {
-                return 7;
-            }
-            case BackRight -> {
-                return 8;
-            }
-        }
-        return 0;
-    }
-
-    public static int getSteerID(SwerveModule module) {
-        switch (module) {
-            case FrontLeft -> {
                 return 1;
             }
             case FrontRight -> {
@@ -78,6 +60,24 @@ public class DrivetrainConstants {
             }
             case BackRight -> {
                 return 4;
+            }
+        }
+        return 0;
+    }
+
+    public static int getSteerID(SwerveModule module) {
+        switch (module) {
+            case FrontLeft -> {
+                return 5;
+            }
+            case FrontRight -> {
+                return 6;
+            }
+            case BackLeft -> {
+                return 7;
+            }
+            case BackRight -> {
+                return 8;
             }
         }
         return 0;
@@ -135,8 +135,8 @@ public class DrivetrainConstants {
     public static TalonFXConfiguration getSteerConfig(SwerveModule module) {
         TalonFXConfiguration config = new TalonFXConfiguration();
 
-        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         config.CurrentLimits.SupplyCurrentLimit = 20;
         config.CurrentLimits.StatorCurrentLimit = 40;
@@ -146,7 +146,7 @@ public class DrivetrainConstants {
         config.Slot0.kV = 0;
         config.Slot0.kG = 0;
         config.Slot0.kS = 0;
-        config.Slot0.kP = 50;
+        config.Slot0.kP = 85;
         config.Slot0.kI = 0;
         config.Slot0.kD = 0;
         config.Slot0.kA = 0;

@@ -5,7 +5,5 @@ public enum RobotStates {
 
     Shooting, // With angle locked
 
-    AligningClimb,
-
     Auto,
 }

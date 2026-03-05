@@ -66,7 +66,7 @@ public class ShooterTalonFX implements ShooterIO {
 
         config.Slot0.kV = .125;
         config.Slot0.kA = 0;
-        config.Slot0.kP = 0;
+        config.Slot0.kP = 0.001;
         config.Slot0.kI = 0;
 
         leaderMotor.getConfigurator().apply(config);
@@ -106,10 +106,12 @@ public class ShooterTalonFX implements ShooterIO {
 
         control = new VelocityVoltage(0);
         control.Slot = 0;
-        control.EnableFOC = false;
+        control.EnableFOC = true;
         control.IgnoreHardwareLimits = false;
         control.LimitForwardMotion = false;
         control.LimitReverseMotion = false;
+        control.UseTimesync = true;
+
         control.UpdateFreqHz = 1000;
 
         leaderMotor.setControl(control);
@@ -149,6 +151,7 @@ public class ShooterTalonFX implements ShooterIO {
 
         control.Velocity = targetVelocity.in(Units.RotationsPerSecond);
         leaderMotor.setControl(control);
+        followerMotor.setControl(followerControl);
     }
 
     @Override

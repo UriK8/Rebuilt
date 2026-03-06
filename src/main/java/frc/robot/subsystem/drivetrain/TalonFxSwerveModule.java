@@ -1,13 +1,10 @@
 package frc.robot.subsystem.drivetrain;
 
 import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.sim.CANcoderSimState;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
@@ -116,10 +113,10 @@ public class TalonFxSwerveModule implements SwerveModuleIO {
         steerAngleSignal = steerEncoder.getAbsolutePosition();
         steerAngularVelocitySignal = steerEncoder.getVelocity();
 
-        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
-        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = .5;
-        encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        steerEncoder.getConfigurator().apply(encoderConfig);
+//        CANcoderConfiguration encoderConfig = new CANcoderConfiguration();
+//        encoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = .5;
+//        encoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+//        steerEncoder.getConfigurator().apply(encoderConfig);
 
         targetState = new SwerveModuleState();
         currentState = new SwerveModuleState();

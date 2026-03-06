@@ -8,6 +8,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -46,7 +47,7 @@ public class ShooterTalonFX implements ShooterIO {
             followerMotor = new TalonFX(19, Robot.MECH_CANBUS);
         }
 
-        followerControl = new Follower(ShooterConstants.LEADER_MOTOR_ID, MotorAlignmentValue.Opposed);
+        followerControl = new Follower(ShooterConstants.LEADER_MOTOR_ID, MotorAlignmentValue.Aligned);
 
         config = new TalonFXConfiguration();
         config.CurrentLimits.SupplyCurrentLimit = 50;
@@ -63,9 +64,9 @@ public class ShooterTalonFX implements ShooterIO {
         config.Audio.BeepOnConfig = true;
         config.Audio.BeepOnBoot = true;
 
-        config.Slot0.kV = .1;
-        config.Slot0.kA = .001;
-        config.Slot0.kP = .75;
+        config.Slot0.kV = .125;
+        config.Slot0.kA = 0;
+        config.Slot0.kP = 0.001;
         config.Slot0.kI = 0;
 
         leaderMotor.getConfigurator().apply(config);
@@ -105,10 +106,12 @@ public class ShooterTalonFX implements ShooterIO {
 
         control = new VelocityVoltage(0);
         control.Slot = 0;
-        control.EnableFOC = false;
+        control.EnableFOC = true;
         control.IgnoreHardwareLimits = false;
         control.LimitForwardMotion = false;
         control.LimitReverseMotion = false;
+        control.UseTimesync = true;
+
         control.UpdateFreqHz = 1000;
 
         leaderMotor.setControl(control);
@@ -137,18 +140,23 @@ public class ShooterTalonFX implements ShooterIO {
         Logger.recordOutput("Shooter/Leader/SupplyCurrent", leaderSupplySignal.getValue());
         Logger.recordOutput("Shooter/Leader/StatorCurrent", leaderStatorSignal.getValue());
         Logger.recordOutput("Shooter/Leader/VoltageSignal", leaderVoltageSignal.getValue());
-        Logger.recordOutput("Shooter/Leader/VelocitySignal", leaderVelocitySignal.getValue());
+        Logger.recordOutput("Shooter/Leader/VelocitySignal", leaderVelocitySignal.getValue().in(Units.RotationsPerSecond));
 
         Logger.recordOutput("Shooter/Follower/Temperature", followerTemperature.getValue());
         Logger.recordOutput("Shooter/Follower/SupplyCurrent", followerSupplySignal.getValue());
         Logger.recordOutput("Shooter/Follower/StatorCurrent", followerStatorSignal.getValue());
         Logger.recordOutput("Shooter/Follower/VoltageSignal", followerVoltageSignal.getValue());
         Logger.recordOutput("Shooter/Follower/VelocitySignal", followerVelocitySignal.getValue());
+
+
+        control.Velocity = targetVelocity.in(Units.RotationsPerSecond);
+        leaderMotor.setControl(control);
+        followerMotor.setControl(followerControl);
     }
 
     @Override
     public void setVelocity(AngularVelocity velocity) {
         this.targetVelocity = velocity;
-    }
 
+    }
 }

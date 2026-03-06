@@ -11,20 +11,16 @@ import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.LinearVelocity;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.IO.Controls;
 import frc.robot.IO.IO;
-import frc.robot.subsystem.climber.ClimberStates;
-import frc.robot.subsystem.climber.ClimberSubsystem;
 import frc.robot.subsystem.drivetrain.Drivetrain;
 import frc.robot.subsystem.drivetrain.DrivetrainConstants;
-import frc.robot.subsystem.drivetrain.control.PositionalControl;
 import frc.robot.subsystem.drivetrain.control.VelocityFOC;
 import frc.robot.subsystem.drivetrain.control.YawLockFOC;
-import frc.robot.subsystem.feeder.FeederStates;
 import frc.robot.subsystem.feeder.FeederSubsystem;
 import frc.robot.subsystem.intake.IntakeStates;
 import frc.robot.subsystem.intake.IntakeSubsystem;
-import frc.robot.subsystem.mop.MopStates;
 import frc.robot.subsystem.mop.MopSubsystem;
 import frc.robot.subsystem.shooter.ShooterSubsystem;
 import org.littletonrobotics.junction.Logger;
@@ -36,8 +32,6 @@ public class Superstructure {
 
     private DriverStation.Alliance alliance;
 
-    private Pose2d CLIMB_LEFT = new Pose2d();
-    private Pose2d CLIMB_RIGHT = new Pose2d();
     private Pose2d FERRY_TARGET_LEFT = new Pose2d();
     private Pose2d FERRY_TARGET_RIGHT = new Pose2d();
     private Pose2d HOPPER_TARGET = new Pose2d();
@@ -49,7 +43,6 @@ public class Superstructure {
     private Pose2d targetPose = new Pose2d();
 
     private final ArrayList<Pose2d> NEAR_TARGET_ARRAY = new ArrayList<>();
-    private final ArrayList<Pose2d> NEAR_CLIMBER_ARRAY = new ArrayList<>();
 
     private Pose2d shooterTarget = new Pose2d();
 
@@ -74,6 +67,7 @@ public class Superstructure {
         setAlliance(DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue));
 
         lockShooterChooser = new SendableChooser<>();
+        SmartDashboard.putData("Lock Shooter Chooser", lockShooterChooser);
         lockShooterChooser.setDefaultOption("Auto Align On", ShooterTargetLockMode.AutoAlign);
         lockShooterChooser.addOption("Auto Align Off", ShooterTargetLockMode.None);
         lockShooterChooser.onChange(this::setTargetLock);
@@ -84,7 +78,6 @@ public class Superstructure {
 
     public void readPeriodic() {
         Drivetrain.getInstance().readPeriodic();
-        ClimberSubsystem.getInstance().readPeriodic();
         FeederSubsystem.getInstance().readPeriodic();
         IntakeSubsystem.getInstance().readPeriodic();
         MopSubsystem.getInstance().readPeriodic();
@@ -162,25 +155,14 @@ public class Superstructure {
 //                    FeederSubsystem.getInstance().setState(FeederStates.OFF);
 //                }
             }
-            case AligningClimb -> {
-                targetPose = robotPose.nearest(NEAR_CLIMBER_ARRAY);
-
-                Drivetrain.getInstance().setControl(new PositionalControl(targetPose));
-                ClimberSubsystem.getInstance().setState(ClimberStates.extend);
-                IntakeSubsystem.getInstance().setState(IntakeStates.StoredOff);
-                MopSubsystem.getInstance().setState(MopStates.OFF);
-                FeederSubsystem.getInstance().setState(FeederStates.OFF);
-            }
             case Auto -> {
 
             }
         }
 
         Drivetrain.getInstance().writePeriodic();
-        ClimberSubsystem.getInstance().writePeriodic();
         IntakeSubsystem.getInstance().writePeriodic();
         ShooterSubsystem.getInstance().writePeriodic();
-
         loggingMechanism();
 
         Logger.recordOutput("Robot State", robotState);
@@ -233,14 +215,12 @@ public class Superstructure {
         }else{
             intakePose = new Pose3d(0.259500, 0, 0.2454524,new Rotation3d(0,Math.toRadians(-98),0));
         }
-        Logger.recordOutput("Mech", intakePose, ClimberSubsystem.getInstance().getClimberPose());
+        Logger.recordOutput("Mech", intakePose);
     }
 
     public void setAlliance(DriverStation.Alliance alliance) {
         this.alliance = alliance;
         if (alliance == DriverStation.Alliance.Blue) {
-            CLIMB_LEFT = FieldConstants.BLUE_CLIMB_LEFT;
-            CLIMB_RIGHT = FieldConstants.BLUE_CLIMB_RIGHT;
 
             FERRY_TARGET_LEFT = FieldConstants.BLUE_FERRY_TARGET_LEFT;
             FERRY_TARGET_RIGHT = FieldConstants.BLUE_FERRY_TARGET_RIGHT;
@@ -250,9 +230,6 @@ public class Superstructure {
             NEAR_FERRY_RIGHT = FieldConstants.BLUE_NEAR_FERRY_RIGHT;
             NEAR_HOPPER = FieldConstants.BLUE_NEAR_HOPPER;
         }else{
-            CLIMB_LEFT = ChoreoAllianceFlipUtil.flip(FieldConstants.BLUE_CLIMB_LEFT);
-            CLIMB_RIGHT = ChoreoAllianceFlipUtil.flip(FieldConstants.BLUE_CLIMB_RIGHT);
-
             FERRY_TARGET_LEFT = ChoreoAllianceFlipUtil.flip(FieldConstants.BLUE_FERRY_TARGET_LEFT);
             FERRY_TARGET_RIGHT = ChoreoAllianceFlipUtil.flip(FieldConstants.BLUE_FERRY_TARGET_RIGHT);
             HOPPER_TARGET = ChoreoAllianceFlipUtil.flip(FieldConstants.BLUE_HOPPER);
@@ -266,10 +243,6 @@ public class Superstructure {
         NEAR_TARGET_ARRAY.add(NEAR_FERRY_LEFT);
         NEAR_TARGET_ARRAY.add(NEAR_FERRY_RIGHT);
         NEAR_TARGET_ARRAY.add(NEAR_HOPPER);
-
-        NEAR_CLIMBER_ARRAY.clear();
-        NEAR_CLIMBER_ARRAY.add(CLIMB_LEFT);
-        NEAR_CLIMBER_ARRAY.add(CLIMB_RIGHT);
     }
 
     private void setTargetLock(ShooterTargetLockMode targetLock) {

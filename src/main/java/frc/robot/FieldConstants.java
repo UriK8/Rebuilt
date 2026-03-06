@@ -4,9 +4,6 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 
 public class FieldConstants {
-    public static final Pose2d BLUE_CLIMB_LEFT = new Pose2d();
-    public static final Pose2d BLUE_CLIMB_RIGHT = new Pose2d();
-
     public static final Pose2d BLUE_FERRY_TARGET_LEFT = new Pose2d(.5,7.5, new Rotation2d());
     public static final Pose2d BLUE_FERRY_TARGET_RIGHT = new Pose2d(.5,.5, new Rotation2d());
     public static final Pose2d BLUE_HOPPER = new Pose2d(4.60,4,new Rotation2d());

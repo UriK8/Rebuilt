@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.IO.Controls;
 import frc.robot.IO.IO;
-import frc.robot.subsystem.climber.ClimberStates;
-import frc.robot.subsystem.climber.ClimberSubsystem;
 import frc.robot.subsystem.drivetrain.Drivetrain;
 import frc.robot.subsystem.feeder.FeederStates;
 import frc.robot.subsystem.feeder.FeederSubsystem;
@@ -29,7 +27,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 public class Robot extends LoggedRobot {
     public static final double PERIOD = .020; // 20 milliseconds
-    public static final CANBus MECH_CANBUS = new CANBus("Mech");
+    public static final CANBus MECH_CANBUS = new CANBus("mech");
 
     private final Superstructure superStructure;
 
@@ -38,12 +36,6 @@ public class Robot extends LoggedRobot {
     private final Trigger intakeTrigger;
     private final Trigger reverseIntakeTrigger;
 
-    private final Trigger manualClimbUpTrigger;
-    private final Trigger manualClimbDownTrigger;
-    private final Trigger extendClimbTrigger;
-    private final Trigger retractClimbTrigger;
-
-    private final Trigger climbAlignTrigger;
     private final Trigger shooterAlignTrigger;
     private final Trigger shooterTrigger;
 
@@ -63,6 +55,7 @@ public class Robot extends LoggedRobot {
         CommandScheduler.getInstance().setPeriod(PERIOD);
 
         resetGyroTrigger = new Trigger(IO.getButton(Controls.resetGyro));
+        resetGyroTrigger.onTrue(new InstantCommand(() -> superStructure.resetGyro()));
 
         intakeTrigger = new Trigger(IO.getButton(Controls.intake));
         intakeTrigger.whileTrue(new StartEndCommand(
@@ -75,24 +68,6 @@ public class Robot extends LoggedRobot {
             () -> IntakeSubsystem.getInstance().setState(IntakeStates.DeployedRevs),
             () -> IntakeSubsystem.getInstance().setState(IntakeStates.StoredOff)
         ));
-
-
-        manualClimbDownTrigger = new Trigger(IO.getButton(Controls.manualClimbDown)); // Need to add code in the climber subsystem to make this work
-        manualClimbUpTrigger = new Trigger(IO.getButton(Controls.manualClimbUp));
-
-        retractClimbTrigger = new Trigger(IO.getButton(Controls.retractClimb));
-        retractClimbTrigger.toggleOnTrue(new InstantCommand(() -> ClimberSubsystem.getInstance().setState(ClimberStates.retract)));
-
-        extendClimbTrigger = new Trigger(IO.getButton(Controls.extendClimb));
-        extendClimbTrigger.toggleOnTrue(new InstantCommand(() -> ClimberSubsystem.getInstance().setState(ClimberStates.extend)));
-
-        climbAlignTrigger = new Trigger(IO.getButton(Controls.climbAlign));
-        climbAlignTrigger.whileTrue(
-            new StartEndCommand(
-                () -> superStructure.setRobotState(RobotStates.AligningClimb),
-                () -> superStructure.setRobotState(RobotStates.Default)
-            )
-        );
 
         shooterAlignTrigger = new Trigger(IO.getButton(Controls.alignShooting));
         shooterAlignTrigger.whileTrue(new StartEndCommand(

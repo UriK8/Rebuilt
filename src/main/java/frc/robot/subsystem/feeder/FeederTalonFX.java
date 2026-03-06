@@ -4,6 +4,7 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.units.measure.Current;
 import edu.wpi.first.units.measure.Temperature;
@@ -34,11 +35,12 @@ public class FeederTalonFX implements FeederIO{
         TalonFXConfiguration feederConfig = new TalonFXConfiguration();
         feederConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         feederConfig.CurrentLimits.SupplyCurrentLimit = 40;
-        feederConfig.CurrentLimits.StatorCurrentLimit = 80;
+        feederConfig.CurrentLimits.StatorCurrentLimit = 120;
         feederConfig.CurrentLimits.StatorCurrentLimitEnable = true;
         feederConfig.Voltage.PeakForwardVoltage = 12;
         feederConfig.Voltage.PeakReverseVoltage = -12;
         feederConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        feederConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         feederMotor.getConfigurator().apply(feederConfig);
 
         feederControl = new VoltageOut(0);
